@@ -100,7 +100,7 @@ jobs:
     - name : Upload artifact
       uses: actions/upload-artifact@master
       with:
-        name: Newifi 3
+        name: Newifi3-D2_${{date +%Y%m%d%H%M%S}}
         path: ./${{env.WORK_DIR}}/bin
     - name: Organize files
       id: organize
