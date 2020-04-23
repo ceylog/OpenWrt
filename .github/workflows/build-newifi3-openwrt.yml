@@ -10,7 +10,7 @@ on:
     types: [published]
   push:
     branches: 
-      - master
+      - develop
     paths:
       - 'newifi3d2.config'
 env:
