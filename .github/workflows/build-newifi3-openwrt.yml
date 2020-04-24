@@ -65,7 +65,6 @@ jobs:
     - name: Clone source code
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH $WORK_DIR
-        echo '开启魔法上网'
         cd $WORK_DIR
         sed -i 's/#src-git/src-git/g' feeds.conf.default
         echo "src-git lienol https://github.com/superstarfly/openwrt-package" >> feeds.conf.default
