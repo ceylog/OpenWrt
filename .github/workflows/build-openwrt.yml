@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build OpenWrt
+name: Build OpenWrt_x86_64
 
 on:
   repository_dispatch:
@@ -33,6 +33,7 @@ env:
   UPLOAD_COWTRANSFER: true
   UPLOAD_WETRANSFER: true
   TZ: Asia/Shanghai
+  WORK_DIR: openwrt
 
 jobs:
   build:
@@ -56,26 +57,25 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         curl -fsSL https://raw.githubusercontent.com/P3TERX/dotfiles/master/.bashrc >> ~/.bashrc
     - name: Clone source code
-      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-
-    - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
-
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
-
-    - name: Import external feeds
-      working-directory: ./openwrt
       run: |
-        git clone https://github.com/superstarfly/openwrt-package package/lienol
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH $WORK_DIR
+        cd $WORK_DIR
+        sed -i 's/#src-git/src-git/g' feeds.conf.default
+        echo "src-git lienol https://github.com/superstarfly/openwrt-package" >> feeds.conf.default
         git clone https://github.com/vernesong/OpenClash package/openclash
-       # git clone 其他github插件源码地址 package/文件夹名称  
+        git clone https://github.com/vernesong/OpenClash package/openclash
+    - name: Update feeds & Install feeds 
+      run: |
+        cd $WORK_DIR 
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+  
     - name: Load custom configuration
       run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        [ -e files ] && mv files $WORK_DIR/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $WORK_DIR/.config
         chmod +x $DIY_SH
-        cd openwrt
+        cd $WORK_DIR
         ../$DIY_SH
     - name: SSH connection to Actions
       uses: P3TERX/debugger-action@master
@@ -84,7 +84,7 @@ jobs:
     - name: Download package
       id: package
       run: |
-        cd openwrt
+        cd $WORK_DIR
         make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
@@ -92,7 +92,7 @@ jobs:
     - name: Compile the firmware
       id: compile
       run: |
-        cd openwrt
+        cd $WORK_DIR
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 V=s
         echo "::set-output name=status::success"
@@ -101,14 +101,14 @@ jobs:
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin
-        path: openwrt/bin
-
+        path: ${{env.WORK_DIR}}/bin
+  
     - name: Organize files
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        cp openwrt/.config openwrt/bin/targets/*/*/
-        cd openwrt/bin/targets/*/*
+        cp $WORK_DIR/.config $WORK_DIR/bin/targets/*/*/
+        cd $WORK_DIR/bin/targets/*/*
         rm -rf packages
         echo "::set-env name=FIRMWARE::$PWD"
         echo "::set-output name=status::success"

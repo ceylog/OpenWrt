@@ -96,11 +96,7 @@ jobs:
         cd $WORK_DIR
         echo -e "$(nproc) thread build."
         make -j$(nproc) V=s
-    - name : Upload artifact
-      uses: actions/upload-artifact@master
-      with:
-        name: Newifi3-D2_${{date +%Y%m%d%H%M%S}}
-        path: ./${{env.WORK_DIR}}/bin
+
     - name: Organize files
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
@@ -110,6 +106,11 @@ jobs:
         rm -rf packages
         echo "::set-env name=FIRMWARE::$PWD"
         echo "::set-output name=status::success"
+    - name : Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: Newifi3-D2_${{date +%Y%m%d%H%M%S}}
+        path: ${{FIRMWARE}}
     - name: Upload firmware to cowtransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
       run: |
