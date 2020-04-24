@@ -63,7 +63,6 @@ jobs:
         sed -i 's/#src-git/src-git/g' feeds.conf.default
         echo "src-git lienol https://github.com/superstarfly/openwrt-package" >> feeds.conf.default
         git clone https://github.com/vernesong/OpenClash package/openclash
-        git clone https://github.com/vernesong/OpenClash package/openclash
     - name: Update feeds & Install feeds 
       run: |
         cd $WORK_DIR 
