@@ -12,7 +12,8 @@
 
 
 # Thanks 
-
-- P3TERX/Actions-OpenWrt
 - coolsnowwolf/lede
+- P3TERX/Actions-OpenWrt
 - ...
+
+在此向开源贡献者们致敬
