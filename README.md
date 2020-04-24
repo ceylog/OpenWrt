@@ -1,4 +1,4 @@
-# Actions-OpenWrt
+# OpenWrt
 
 - x86_64 ![Build OpenWrt](https://github.com/ceylog/OpenWrt/workflows/Build%20OpenWrt/badge.svg?branch=master)
 - Newifi3-D2 ![Build Newifi 3](https://github.com/ceylog/OpenWrt/workflows/Build%20Newifi%203/badge.svg?branch=master)
