@@ -110,7 +110,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: Newifi3-D2
-        path: ${{FIRMWARE}}
+        path: ./${{env.WORK_DIR}}/bin/gargets
     - name: Upload firmware to cowtransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
       run: |
