@@ -21,7 +21,7 @@ echo '删除旧版argon,链接新版'
 rm -rf ./package/lean/luci-theme-argon
 ln -s ../../../luci-theme-argon ./package/lean/
 
-echo '修改wifi名称'
+echo '修改wifi名称 '
 sed -i 's/OpenWrt/summerCatGang/g' package/kernel/mac80211/files/lib/wifi/mac80211.sh
 
 echo '修改banner'
